@@ -90,7 +90,7 @@ def acessar_site(url_pesquisa, lista_itens):
                      if (elem.text == "  Download"):
                          elem.click()
                          pdfLinks = browser.find_elements_by_css_selector("a[class = 'link pdf-page']")
-                         links = ([pdfLink.get_attribute('href') for pdfLink in pdfLinks])
+                         links.append([pdfLink.get_attribute('href') for pdfLink in pdfLinks])
                          break
                   i = i + 1   
     finally:
@@ -115,20 +115,20 @@ def define_num_pag(elem_pag):
     total_pag = int(list_separada_str_pag[0])
     return total_pag
 
-def downloader(lista_links, assunto, nome_pdf):
+def downloader(link, assunto, num_pdf):
     """ Função responsável por utilizar requests para baixar uma lista de PDFs
 
     A função cria um novo arquivo binário baseado nos links que recebe
     """
-    for i in range (len(lista_links)):
-        res = requests.get(lista_links[i], verify=False)
-        res.raise_for_status()
-        nome_pdf = '/Download/'+str(nome_pdf).zfill(3)
-        nome_pdf = assunto+numPDF+'.pdf'
-        arquivo_aberto = open(nome_pdf, 'wb')
-        for chunk in res.iter_content(10000):
-            arquivoAberto.write(chunk)
-        arquivo_aberto.close()
+    res = requests.get(link, verify=False)
+    res.raise_for_status()
+    num_pdf_str = str(num_pdf).zfill(3)
+    nome_pdf = 'Download/'+assunto+num_pdf_str+'.pdf'
+    arquivo_aberto = open(nome_pdf, 'wb')
+    for chunk in res.iter_content(10000):
+        arquivo_aberto.write(chunk)
+    print("Arquivo "+nome_pdf+" baixado...")
+    arquivo_aberto.close()
 
 def montador_url(lista_itens, num_int):
     """ Função responsável por montar url seguindo os padrões de pesquisa do site https://doweb.rio.rj.gov.br/
@@ -150,12 +150,10 @@ lista_itens_pesquisar = definicao_categorias_buscadas('arquivo_busca_pdf.txt')
 for i in range (len(lista_itens_pesquisar)):
     url_pesquisar = montador_url(lista_itens_pesquisar[i],1)
     list = acessar_site(url_pesquisar,lista_itens_pesquisar[i])
-    for i in range (len(list)):
-        print (str(len(list)))
-        if len(list[i]) == 0 :
-            print (list[i])
-        else:
-            for j in range (len(list[i])):
-                print(list[i][j])
+    cont = 1
+    for j in range (len(list)):
+        for k in range (len(list[j])):
+            downloader(list[j][k],lista_itens_pesquisar[i][0],cont)
+            cont = cont + 1
 
 #local onde está salvo C:/Users/mathe/source/repos/WebCrawlerPyRJ/WebCrawlerPyRJ/nomeDoArquivo.pdf
