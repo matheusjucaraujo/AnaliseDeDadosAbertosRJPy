@@ -84,7 +84,7 @@ def acessar_site(url_pesquisa, lista_itens):
                          pdfLinks = browser.find_elements_by_css_selector("a[class = 'link pdf-page']")
                          links.append([pdfLink.get_attribute('href') for pdfLink in pdfLinks])
                          break
-                i = i + 1
+                i += 1
             else:
                   for elem in browser.find_elements_by_class_name('dropup'):
                      if (elem.text == "  Download"):
@@ -92,7 +92,7 @@ def acessar_site(url_pesquisa, lista_itens):
                          pdfLinks = browser.find_elements_by_css_selector("a[class = 'link pdf-page']")
                          links.append([pdfLink.get_attribute('href') for pdfLink in pdfLinks])
                          break
-                  i = i + 1   
+                  i += 1   
     finally:
         browser.quit()
         return links
@@ -118,7 +118,12 @@ def define_num_pag(elem_pag):
 def downloader(link, assunto, num_pdf):
     """ Função responsável por utilizar requests para baixar uma lista de PDFs
 
-    A função cria um novo arquivo binário baseado nos links que recebe
+    A função cria um novo arquivo binário baseado nos links que recebe, o arquivo é dividio em bytes de 10000
+    para não sobrecarregar o computador e nem a rede de onde baixa os PDFs.
+    @Param link - String que contém a URL direta para download do PDF
+    @Param assunto - String que possúi o objeto relacionado ao PDF
+    @Param num_pdf - Inteiro indicando qual número do arquivo a ser baixado para evitar sobrescrita e facilitar ordenação
+
     """
     res = requests.get(link, verify=False)
     res.raise_for_status()
@@ -149,11 +154,11 @@ def montador_url(lista_itens, num_int):
 lista_itens_pesquisar = definicao_categorias_buscadas('arquivo_busca_pdf.txt')
 for i in range (len(lista_itens_pesquisar)):
     url_pesquisar = montador_url(lista_itens_pesquisar[i],1)
-    list = acessar_site(url_pesquisar,lista_itens_pesquisar[i])
-    cont = 1
-    for j in range (len(list)):
-        for k in range (len(list[j])):
-            downloader(list[j][k],lista_itens_pesquisar[i][0],cont)
-            cont = cont + 1
+    lista_url = acessar_site(url_pesquisar,lista_itens_pesquisar[i])
+    cont_arquivo = 1
+    for j in range (len(lista_url)):
+        for k in range (len(lista_url[j])):
+            downloader(lista_url[j][k],lista_itens_pesquisar[i][0],cont_arquivo)
+            cont_arquivo += 1
 
 #local onde está salvo C:/Users/mathe/source/repos/WebCrawlerPyRJ/WebCrawlerPyRJ/nomeDoArquivo.pdf
