@@ -20,7 +20,7 @@ def definicao_categorias_buscadas(nome_arquivo_txt):
     Padrão do formato - nome_produto, di=aaaaMMdd, df=aaaaMMdd
     """
 
-    arquivo = open(nome_arquivo_txt, "r")
+    arquivo = open(nome_arquivo_txt, "r", encoding="UTF-8")
     lista_itens_pesquisar = []
     num_linhas = sum(1 for line in open(nome_arquivo_txt))
     for i in range (num_linhas):
@@ -161,4 +161,4 @@ for i in range (len(lista_itens_pesquisar)):
             downloader(lista_url[j][k],lista_itens_pesquisar[i][0],cont_arquivo)
             cont_arquivo += 1
 
-#local onde está salvo C:/Users/mathe/source/repos/WebCrawlerPyRJ/WebCrawlerPyRJ/nomeDoArquivo.pdf
+#local onde está salvo C:/Users/mathe/source/repos/WebScrapperPyRJ/WebScrapperPyRJ/Download/...
